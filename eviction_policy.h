@@ -21,7 +21,7 @@ public:
   EvictionPolicy(index_t _buf_sz) : buf_sz(_buf_sz) {}
   ~EvictionPolicy() {}
 
-  virtual index_t evict(offset_t *offset_buf);
+  virtual index_t evict(offset_t *offset_buf) = 0;
 };
 
 class OptimalPolicy : EvictionPolicy {
@@ -49,4 +49,6 @@ public:
 #endif
   }
   ~OptimalPolicy() { delete access_map; }
+
+  index_t evict(offset_t *offset_buf) override;
 };

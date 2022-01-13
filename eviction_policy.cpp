@@ -47,7 +47,7 @@ void OptimalPolicy::init() {
 }
 
 // Find out page which will not be used in future
-index_t EvictionPolicy::evict(offset_t *offset_buf){
+index_t OptimalPolicy::evict(offset_t *offset_buf){
   init();
 
   vector<thread> threads;
