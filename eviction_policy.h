@@ -14,13 +14,14 @@ protected:
   // vector<offset_t> *access_log;
   // index_t cursor;
   index_t buf_sz;
+  index_t res;
 
 public:
   EvictionPolicy() : buf_sz(CACHE_SIZE / PAGE_SIZE) {}
-  EvictionPolicy(index_t buf_sz) {}
+  EvictionPolicy(index_t _buf_sz) : buf_sz(_buf_sz) {}
   ~EvictionPolicy() {}
 
-  index_t evict(offset_t *offset_buf, index_t buf_sz);
+  virtual index_t evict(offset_t *offset_buf);
 };
 
 class OptimalPolicy : EvictionPolicy {
@@ -30,7 +31,7 @@ private:
 
   mutex write_lock;
   pair<index_t, bool> wont_use_block;
-  index_t res, farthest;
+  index_t farthest;
 
   void init() override;
   void find(int thread_n, offset_t *offset_buf) override;

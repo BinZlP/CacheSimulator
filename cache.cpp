@@ -99,7 +99,7 @@ int Cache::access(offset_t offset) {
       used_block++;
     }
     // else, replace with the data which will not be used in future.
-    else replace(offset, replace_policy->evict(offset_buf, total_block));
+    else replace(offset, replace_policy->evict(offset_buf));
 
     return 0;
 

@@ -33,15 +33,16 @@ private:
 
 
 public:
+  Cache() {}
   // Cache(unsigned long long _cache_size, unsigned long long _block_size, EvictionPolicy *_predictor, offset_t max_value)
   //        : cache_hit(0), cache_miss(0), cold_miss(0), cache_total_size(_cache_size), cache_block_size(_block_size),
   //          total_block(_cache_size/_block_size), used_block(0), replace_policy(_predictor), reference_map(), is_finished(false) {
-    Cache(unsigned long long _cache_size, unsigned long long _block_size, EvictionPolicy *_policy, offset_t max_value)
-         : cache_hit(0), cache_miss(0), cold_miss(0), cache_total_size(_cache_size), cache_block_size(_block_size),
-           total_block(_cache_size/_block_size), used_block(0), replace_policy(_policy), reference_map(), is_finished(false) {
-    offset_buf = (offset_t *)calloc(total_block, sizeof(offset_t));
-    for(index_t i=0; i<total_block; i++) offset_buf[i] = Cache::EMPTY;
-    reference_map = (bool *)calloc((max_value/_block_size)+1, sizeof(bool));
+  Cache(unsigned long long _cache_size, unsigned long long _block_size, EvictionPolicy *_policy, offset_t max_value)
+        : cache_hit(0), cache_miss(0), cold_miss(0), cache_total_size(_cache_size), cache_block_size(_block_size),
+          total_block(_cache_size/_block_size), used_block(0), replace_policy(_policy), reference_map(), is_finished(false) {
+  offset_buf = (offset_t *)calloc(total_block, sizeof(offset_t));
+  for(index_t i=0; i<total_block; i++) offset_buf[i] = Cache::EMPTY;
+  reference_map = (bool *)calloc((max_value/_block_size)+1, sizeof(bool));
 #ifdef DEBUG_LOG
     cout << "Cache init. completed. " << endl;
 #endif
@@ -63,4 +64,6 @@ public:
   unsigned long long get_hit() { return cache_hit; }
   unsigned long long get_miss() { return cache_miss; }
   unsigned long long get_cold_miss() { return cold_miss; }
+
+  EvictionPolicy *get_policy() { return replace_policy; }
 };

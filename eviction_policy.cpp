@@ -47,17 +47,21 @@ void OptimalPolicy::init() {
 }
 
 // Find out page which will not be used in future
-index_t EvictionPolicy::evict(offset_t *offset_buf, index_t buf_sz){
+index_t EvictionPolicy::evict(offset_t *offset_buf){
   init();
 
   vector<thread> threads;
-  for(int i=0; i<MAX_THREAD; i++){
-    threads.push_back(thread([=]{this->find(i, offset_buf);}));
-  }
-  for(int i=0; i<MAX_THREAD; i++){
-    // If some thread found the block that will not be used in future,
-    // other threads will return as soon as they finish checking currently looking block.
-    threads[i].join();
+  if(buf_sz > (MAX_THREAD << 12)) {
+    for(int i=0; i<MAX_THREAD; i++){
+      threads.push_back(thread([=]{this->find(i, offset_buf);}));
+    }
+    for(int i=0; i<MAX_THREAD; i++){
+      // If some thread found the block that will not be used in future,
+      // other threads will return as soon as they finish checking currently looking block.
+      threads[i].join();
+    }
+  } else {
+    find(0, offset_buf);
   }
 
   return get_result();

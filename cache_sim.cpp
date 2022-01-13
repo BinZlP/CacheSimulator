@@ -20,7 +20,7 @@ void calculate_optimal_hit_ratio(LogReader *access_log) {
   offset_t max_value = access_log->max_value();
   cout << "Offset max value: " << max_value << endl;
 
-  OptimalPolicy my_predictor(access_log);
+  OptimalPolicy my_predictor(access_log, CACHE_SIZE/PAGE_SIZE);
   Cache my_cache(CACHE_SIZE, PAGE_SIZE, (EvictionPolicy *)&my_predictor, max_value);
 
   for(index_t i=0; i < access_log->size(); i++, access_log->cursor_next())
