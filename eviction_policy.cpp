@@ -2,12 +2,12 @@
 #include <vector>
 #include "eviction_policy.h"
 
-// ****************************************
+// ********************************************
 /* ---- Member functions of OptimalPolicy ---- */
-// ****************************************
+// ********************************************
 
 // Thread task function
-void OptimalPolicy::find(int thread_n, offset_t *offset_buf, index_t buf_sz) {
+void OptimalPolicy::find(int thread_n, offset_t *offset_buf) {
   index_t start = (buf_sz/MAX_THREAD) * thread_n;
   index_t end = (thread_n+1) == MAX_THREAD ? buf_sz : ((buf_sz/MAX_THREAD) * (thread_n+1));
 
@@ -52,7 +52,7 @@ index_t EvictionPolicy::evict(offset_t *offset_buf, index_t buf_sz){
 
   vector<thread> threads;
   for(int i=0; i<MAX_THREAD; i++){
-    threads.push_back(thread([=]{this->find(i, offset_buf, buf_sz);}));
+    threads.push_back(thread([=]{this->find(i, offset_buf);}));
   }
   for(int i=0; i<MAX_THREAD; i++){
     // If some thread found the block that will not be used in future,
