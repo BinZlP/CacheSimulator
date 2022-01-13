@@ -1,6 +1,6 @@
 FLAGS= -O3
 INCLUDE_FLAG= -lpthread 
-OBJS=cache_sim.o access_map.o eviction_policy.o cache.o log_reader.o
+OBJS=cache_sim.o access_map.o eviction_policy.o cache.o log_reader.o clock_policy.o
 TARGET=cache_sim
 
 $(TARGET): $(OBJS)
@@ -20,6 +20,9 @@ cache_sim.o: cache_sim.cpp common_include.h access_map.h eviction_policy.h cache
 
 log_reader.o: log_reader.cpp log_reader.h common_include.h
 	g++ -c -o log_reader.o $(FLAGS) log_reader.cpp 
+
+clock_policy.o: clock_policy.cpp clock_policy.h common_include.h eviction_policy.h
+	g++ -c -o clock_policy.o $(FLAGS) clock_policy.cpp
 
 clean:
 	rm -rf $(OBJS)
