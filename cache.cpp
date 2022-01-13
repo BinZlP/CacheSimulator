@@ -20,40 +20,41 @@ void Cache::thread_search(int thread_num, offset_t offset, index_t *ret_buf){
 
 // Check target page is in the cache
 index_t Cache::search(offset_t offset){
-  index_t *ret_val = (index_t *)calloc(MAX_THREAD, sizeof(index_t));
-  for(int i=0; i<MAX_THREAD; i++)
-    ret_val[i] = -1;
+  if(total_block > (MAX_THREAD << 12) ) {
+    index_t *ret_val = (index_t *)calloc(MAX_THREAD, sizeof(index_t));
+    for(int i=0; i<MAX_THREAD; i++)
+      ret_val[i] = -1;
 
-  index_t res;
-  vector<thread> thread_v;
+    index_t res;
+    vector<thread> thread_v;
 
-  for(int i=0; i<MAX_THREAD; i++)
-    thread_v.push_back(thread(&Cache::thread_search, this, i, offset, &ret_val[i]));
-  for(int i=0; i<MAX_THREAD; i++)
-    thread_v[i].join();
+    for(int i=0; i<MAX_THREAD; i++)
+      thread_v.push_back(thread(&Cache::thread_search, this, i, offset, &ret_val[i]));
+    for(int i=0; i<MAX_THREAD; i++)
+      thread_v[i].join();
 
-  is_finished = false;
-  for(int i=0; i<MAX_THREAD; i++)
-    if(ret_val[i] != -1) {
-      res = ret_val[i];
+    is_finished = false;
+    for(int i=0; i<MAX_THREAD; i++)
+      if(ret_val[i] != -1) {
+        res = ret_val[i];
 #ifdef DEBUG_LOG
-      cout << "[SEARCH] found: " << offset << "," << res << endl;
+        cout << "[SEARCH] found: " << offset << "," << res << endl;
 #endif
-      free(ret_val);
-      return res;
+        free(ret_val);
+        return res;
+      }
+#ifdef DEBUG_LOG
+    cout << "[SEARCH] not found: " << offset << endl;
+#endif
+    free(ret_val);
+    return -1;
+  } else {
+    for(index_t i=0; i<total_block; i++) {
+      if(offset_buf[i] == offset)
+        return i;
     }
-#ifdef DEBUG_LOG
-  cout << "[SEARCH] not found: " << offset << endl;
-#endif
-  free(ret_val);
-  return -1;
-/*
-  for(index_t i=0; i<CACHE_SIZE/PAGE_SIZE; i++){
-    if(offset_buf[i] == offset)
-      res = i;
+    return -1;
   }
-  return res;
-*/
 }
 
 // Get empty block's index
