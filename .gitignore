@@ -1,0 +1,6 @@
+.vscode/
+log_files/
+*.out
+*.log
+*.o
+*.s
