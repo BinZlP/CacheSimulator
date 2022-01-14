@@ -24,11 +24,17 @@ index_t ClockPolicy::get_result() {
 }
 
 void ClockPolicy::notify_replace(index_t slot, offset_t new_off) {
+#ifdef DEBUG_LOG
+  cout << "[CLOCK] Slot " << slot << "replaced with offset " << new_off << endl;
+#endif
   clock_data[slot].offset = new_off;
   clock_data[slot].chance = false;
 }
 
 void ClockPolicy::update_score(index_t slot) {
+#ifdef DEBUG_LOG
+  cout << "[CLOCK] Slot " << slot << "chance = true" << endl;
+#endif
   clock_data[slot].chance = true;
 }
 
