@@ -78,8 +78,10 @@ offset_t Cache::replace(offset_t offset, index_t index){
 
 // Try to access target data.
 // If there's no data in cache, load data into cache.
-int Cache::access(offset_t offset) {
-  if(search(offset) < 0) { // If there's no target in the cache
+index_t Cache::access(offset_t offset) {
+  index_t ret = search(offset);
+
+  if(ret < 0) { // If there's no target in the cache
     if(is_referenced_before(offset)) { // cache miss
 #ifdef HIT_MISS_LOG
       cout << "CACHE MISS: " << offset << endl;
@@ -95,13 +97,16 @@ int Cache::access(offset_t offset) {
 
     // If there're empty blocks, insert page into empty block.
     if(used_block < total_block) {
-      replace(offset, get_empty_block_index());
+      ret = get_empty_block_index();
+      replace(offset, ret);
       used_block++;
     }
     // else, replace with the data which will not be used in future.
-    else replace(offset, replace_policy->evict(offset_buf));
-
-    return 0;
+    else {
+      ret = replace_policy->evict(offset_buf);
+      replace(offset, ret);
+    }
+    return ret;
 
   } else { // If found target in the cache
 
@@ -110,7 +115,7 @@ int Cache::access(offset_t offset) {
 #endif
     hit();
 
-    return 1;
+    return ret;
 
   }
 }
