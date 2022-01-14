@@ -78,7 +78,7 @@ offset_t Cache::replace(offset_t offset, index_t index){
 
 // Try to access target data.
 // If there's no data in cache, load data into cache.
-// @return < 0 if hit, 0 if cold miss, and -1 if cache miss.
+// @return < 0 if hit, -1 if cold miss, and -2 if cache miss.
 int Cache::access(offset_t offset) {
   int ret = search(offset);
   index_t target_index = 0;
@@ -89,14 +89,14 @@ int Cache::access(offset_t offset) {
       cout << "CACHE MISS: " << offset << endl;
 #endif
       miss(false);
-      ret = -1;
+      ret = -2;
     } else { // Counts cold miss seperatly
 #ifdef HIT_MISS_LOG
       cout << "CACHE COLD MISS: " << offset << endl;
 #endif
       miss(true);
       reference_map[offset/cache_block_size] = true;
-      ret = 0;
+      ret = -1;
     }
 
     // If there're empty blocks, insert page into empty block.
