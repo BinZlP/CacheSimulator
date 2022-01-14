@@ -78,7 +78,8 @@ offset_t Cache::replace(offset_t offset, index_t index){
 
 // Try to access target data.
 // If there's no data in cache, load data into cache.
-index_t Cache::access(offset_t offset) {
+// @return < 0 if hit, 0 if cold miss, and -1 if cache miss.
+int Cache::access(offset_t offset) {
   index_t ret = search(offset);
 
   if(ret < 0) { // If there's no target in the cache
