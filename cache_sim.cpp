@@ -9,19 +9,23 @@
 #include "eviction_policy.h"
 #include "cache.h"
 #include "log_reader.h"
+#include "associative_cache.h"
 
+// #define WAY_SIZE 12 * PAGE_SIZE
+// #define NUM_WAY 43690
 
 // *************************
 /* ---- main functions ---- */
 // *************************
 
-// void calculate_optimal_hit_ratio(vector<offset_t> *access_log) {
-void calculate_optimal_hit_ratio(LogReader *access_log) {
+// void compute_optimal_hit_ratio(vector<offset_t> *access_log) {
+void compute_optimal_hit_ratio(LogReader *access_log) {
   offset_t max_value = access_log->max_value();
   cout << "Offset max value: " << max_value << endl;
 
-  OptimalPolicy my_predictor(access_log, CACHE_SIZE/PAGE_SIZE);
-  Cache my_cache(CACHE_SIZE, PAGE_SIZE, (EvictionPolicy *)&my_predictor, max_value);
+  // OptimalPolicy my_predictor(access_log, CACHE_SIZE/PAGE_SIZE);
+  // Cache my_cache(CACHE_SIZE, PAGE_SIZE, (EvictionPolicy *)&my_predictor, max_value);
+  AssociativeCache my_cache(CACHE_SIZE, PAGE_SIZE, 2, max_value);
 
   for(index_t i=0; i < access_log->size(); i++, access_log->cursor_next())
     my_cache.access(access_log->at(i));
@@ -67,8 +71,8 @@ int main(int argc, char** argv) {
 
   cout << "Simulator starts." << endl;
   auto start = chrono::high_resolution_clock::now();
-  // calculate_optimal_hit_ratio(&access_log);
-  calculate_optimal_hit_ratio(&access_log);
+  // compute_optimal_hit_ratio(&access_log);
+  compute_optimal_hit_ratio(&access_log);
   auto elapsed = chrono::high_resolution_clock::now() - start;
 
   cout << "Elapsed time for getting optimal hit ratio: " << chrono::duration_cast<chrono::seconds>(elapsed).count() << " sec." << endl;

@@ -6,17 +6,22 @@ void ClockPolicy::init() {
 }
 
 void ClockPolicy::find(int thread_n, offset_t *offset_buf) {
-  index_t clock_cursor = clock_head % buf_sz;
+  index_t clock_cursor = clock_head;
   do {
     if(clock_data[clock_cursor].offset != offset_buf[clock_cursor]) {
       cout << "[FATAL] Clock's data is mismatch with cache's data" << endl;
+      cout << "        req: " << offset_buf[clock_cursor] << ", clock data: " << clock_data[clock_cursor].offset << endl;
       exit(-1);
     }
 
     if(clock_data[clock_cursor].chance == false)
       res = clock_cursor;
+    else
+      clock_data[clock_cursor].chance = false;
+    
+    clock_cursor = (clock_cursor + 1) % buf_sz;
   } while(res == -1);
-  clock_head = (clock_cursor + 1) % buf_sz;
+  clock_head = clock_cursor;
 }
 
 index_t ClockPolicy::get_result() {
@@ -25,7 +30,7 @@ index_t ClockPolicy::get_result() {
 
 void ClockPolicy::notify_replace(index_t slot, offset_t new_off) {
 #ifdef DEBUG_LOG
-  cout << "[CLOCK] Slot " << slot << "replaced with offset " << new_off << endl;
+  cout << "[CLOCK] Slot " << slot << " replaced with offset " << new_off << endl;
 #endif
   clock_data[slot].offset = new_off;
   clock_data[slot].chance = false;
@@ -33,7 +38,7 @@ void ClockPolicy::notify_replace(index_t slot, offset_t new_off) {
 
 void ClockPolicy::update_score(index_t slot) {
 #ifdef DEBUG_LOG
-  cout << "[CLOCK] Slot " << slot << "chance = true" << endl;
+  cout << "[CLOCK] Slot " << slot << " chance = true" << endl;
 #endif
   clock_data[slot].chance = true;
 }
