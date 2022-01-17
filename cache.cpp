@@ -50,9 +50,16 @@ index_t Cache::search(offset_t offset){
     return -1;
   } else {
     for(index_t i=0; i<total_block; i++) {
-      if(offset_buf[i] == offset)
+      if(offset_buf[i] == offset) {
+#ifdef DEBUG_LOG
+        cout << "[SEARCH] found: " << offset << "," << i << endl;
+#endif
         return i;
+      }
     }
+#ifdef DEBUG_LOG
+    cout << "[SEARCH] not found: " << offset << endl;
+#endif
     return -1;
   }
 }
@@ -79,8 +86,8 @@ offset_t Cache::replace(offset_t offset, index_t index){
 // Try to access target data.
 // If there's no data in cache, load data into cache.
 // @return < 0 if hit, -1 if cold miss, and -2 if cache miss.
-int Cache::access(offset_t offset) {
-  int ret = search(offset);
+index_t Cache::access(offset_t offset) {
+  index_t ret = search(offset);
   index_t target_index = 0;
 
   if(ret < 0) { // If there's no target in the cache
@@ -126,8 +133,7 @@ int Cache::access(offset_t offset) {
 
 // Check whether target is referenced before
 bool Cache::is_referenced_before(offset_t offset) {
-  if(reference_map[offset/cache_block_size]) return true;
-  else return false;
+  return reference_map[offset/cache_block_size];
 }
 
 // Print cache statistics
