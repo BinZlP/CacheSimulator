@@ -85,7 +85,7 @@ void optimalPage(vector<int> &pg, int pn, int fn)
 
     cout << "[Cache statistics]" << endl;
     cout << "  Cache hit: " << hit << endl;
-    cout << "  Cache miss(w/o cold miss): " << miss << endl;
+    cout << "  Cache miss: " << miss << endl;
     cout << "  Cache hit ratio: " << (double)hit / (double)(hit+miss) << endl;
 }
 
