@@ -60,6 +60,7 @@ void optimalPage(vector<int> &pg, int pn, int fn)
     // and check for miss and hit.
     int hit = 0;
     int miss = 0;
+    int cold_miss = 0;
     for (int i = 0; i < pn; i++) {
 
         // Page found in a frame : HIT
@@ -70,7 +71,7 @@ void optimalPage(vector<int> &pg, int pn, int fn)
 
         // Page not found in a frame : MISS
         if (reference_map[pg[i]]) miss++;
-        else reference_map[pg[i]]=true;
+        else { cold_miss++; reference_map[pg[i]]=true; }
 
         // If there is space available in frames.
         if (fr.size() < fn)
@@ -85,7 +86,8 @@ void optimalPage(vector<int> &pg, int pn, int fn)
 
     cout << "[Cache statistics]" << endl;
     cout << "  Cache hit: " << hit << endl;
-    cout << "  Cache miss: " << miss << endl;
+    cout << "  Cache miss(w/o cold miss): " << miss << endl;
+    cout << "  Cache cold miss: " << cold_miss << endl;
     cout << "  Cache hit ratio: " << (double)hit / (double)(hit+miss) << endl;
 }
 
