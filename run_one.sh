@@ -10,5 +10,5 @@ fi
 make clean
 # g++ -o cache_sim.out cache_sim.cpp -lpthread -DCACHE_SIZE=$2 -DPAGE_SIZE=$3 -O3
 make FLAGS+=" -DCACHE_SIZE=$2 -DPAGE_SIZE=$3"
-sudo sh -c 'echo 3 > /proc/sys/vm/drop_caches'
+# sudo sh -c 'echo 3 > /proc/sys/vm/drop_caches'
 ./cache_sim $1
