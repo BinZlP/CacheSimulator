@@ -25,24 +25,13 @@ void compute_optimal_hit_ratio(LogReader *access_log) {
 
   // OptimalPolicy my_predictor(access_log, CACHE_SIZE/PAGE_SIZE);
   // Cache my_cache(CACHE_SIZE, PAGE_SIZE, (EvictionPolicy *)&my_predictor, max_value);
-  AssociativeCache my_cache(CACHE_SIZE, PAGE_SIZE, 2, max_value);
+  AssociativeCache my_cache(CACHE_SIZE, PAGE_SIZE, 43690, max_value);
 
   for(index_t i=0; i < access_log->size(); i++, access_log->cursor_next())
     my_cache.access(access_log->at(i));
 
   my_cache.print_statistics();
 }
-
-// unsigned long long extract_access_log(ifstream &log_file, vector<offset_t> &access_log) {
-//   unsigned long long count = 0;
-//   string line;
-//   while(getline(log_file, line)) {
-//     access_log.push_back(stoull(line));
-//     count++;
-//   }
-//   return count;
-// }
-
 
 int main(int argc, char** argv) {
   /*if(argc < 4) {

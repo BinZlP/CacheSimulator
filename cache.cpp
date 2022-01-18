@@ -21,7 +21,8 @@ void Cache::thread_search(int thread_num, offset_t offset, index_t *ret_buf){
 // Check target page is in the cache
 index_t Cache::search(offset_t offset){
   if(total_block > (MAX_THREAD << 12) ) {
-    index_t *ret_val = (index_t *)calloc(MAX_THREAD, sizeof(index_t));
+    // index_t *ret_val = (index_t *)calloc(MAX_THREAD, sizeof(index_t));
+    index_t *ret_val = new index_t[MAX_THREAD];
     for(int i=0; i<MAX_THREAD; i++)
       ret_val[i] = -1;
 
@@ -40,13 +41,15 @@ index_t Cache::search(offset_t offset){
 #ifdef DEBUG_LOG
         cout << "[SEARCH] found: " << offset << "," << res << endl;
 #endif
-        free(ret_val);
+        // free(ret_val);
+        delete ret_val;
         return res;
       }
 #ifdef DEBUG_LOG
     cout << "[SEARCH] not found: " << offset << endl;
 #endif
-    free(ret_val);
+    // free(ret_val);
+    delete ret_val;
     return -1;
   } else {
     for(index_t i=0; i<total_block; i++) {
@@ -102,7 +105,8 @@ index_t Cache::access(offset_t offset) {
       cout << "CACHE COLD MISS: " << offset << endl;
 #endif
       miss(true);
-      reference_map[offset/cache_block_size] = true;
+      // reference_map[offset/cache_block_size] = true;
+      reference_map->insert(pair<offset_t, bool>(offset, true));
       ret = -1;
     }
 
@@ -133,7 +137,11 @@ index_t Cache::access(offset_t offset) {
 
 // Check whether target is referenced before
 bool Cache::is_referenced_before(offset_t offset) {
-  return reference_map[offset/cache_block_size];
+  // return reference_map[offset/cache_block_size];
+  if(reference_map->find(offset) != reference_map->end())
+    return true;
+  else
+    return false;
 }
 
 // Print cache statistics

@@ -43,9 +43,14 @@ private:
 public:
   AssociativeCache(unsigned long long _total_cache_size, unsigned long long _block_size,
     index_t _num_way, offset_t _max_value)
-    : total_cache_size(_total_cache_size), way_cache_block_num((_total_cache_size / _num_way) / _block_size),
+    : total_cache_size(_total_cache_size), 
+      // way_cache_block_num((_total_cache_size / _block_size) / _num_way),
+      way_cache_block_num(12),
       num_way(_num_way)
   {
+#ifdef DEBUG_LOG
+    cout << "Block # of each cache: " << way_cache_block_num << endl;
+#endif
     hasher = new AssociativeCacheHasher(_num_way, _block_size);
     caches = new Cache*[num_way];
     for(index_t i=0; i<num_way; i++) {
@@ -55,8 +60,10 @@ public:
 
   ~AssociativeCache() {
     delete hasher;
-    for(index_t i=0; i<num_way; i++)
+    for(index_t i=0; i<num_way; i++) {
       delete caches[i]->get_policy();
+      delete caches[i];
+    }
     delete caches;
   }
 

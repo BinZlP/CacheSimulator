@@ -14,7 +14,7 @@ private:
 
 public:
   LogReader(char *file);
-  ~LogReader() {}
+  ~LogReader() { delete access_log; }
 
   offset_t at(index_t i) { return access_log->at(i); }
 

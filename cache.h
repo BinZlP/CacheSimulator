@@ -2,6 +2,8 @@
 #include "common_include.h"
 #include "eviction_policy.h"
 
+#include <map>
+
 class Cache {
 private:
   static const offset_t EMPTY = -1;
@@ -18,8 +20,8 @@ private:
 
   offset_t *offset_buf;
 
-  //map<offset_t, bool> reference_map;
-  bool *reference_map;
+  map<offset_t, bool> *reference_map;
+  // bool *reference_map;
 
   bool is_finished;
 
@@ -36,16 +38,17 @@ public:
   //          total_block(_cache_size/_block_size), used_block(0), replace_policy(_predictor), reference_map(), is_finished(false) {
   Cache(unsigned long long _cache_size, unsigned long long _block_size, EvictionPolicy *_policy, offset_t max_value)
         : cache_hit(0), cache_miss(0), cold_miss(0), cache_total_size(_cache_size), cache_block_size(_block_size),
-          total_block(_cache_size/_block_size), used_block(0), replace_policy(_policy), reference_map(), is_finished(false) {
+          total_block(_cache_size/_block_size), used_block(0), replace_policy(_policy), is_finished(false) {
   offset_buf = new offset_t[total_block];
   for(index_t i=0; i<total_block; i++) offset_buf[i] = Cache::EMPTY;
-  reference_map = new bool[max_value/_block_size + 1];
-  for(index_t i=0; i<(max_value/_block_size)+1; i++) reference_map[i] = 0;
+  // reference_map = new bool[max_value/_block_size + 1];
+  // for(index_t i=0; i<(max_value/_block_size)+1; i++) reference_map[i] = 0;
+  reference_map = new map<offset_t, bool>();
 #ifdef DEBUG_LOG
   cout << "Cache init. completed. " << endl;
 #endif
   }
-  ~Cache(){ free(offset_buf); free(reference_map); }
+  ~Cache(){ delete offset_buf; delete reference_map; }
 
   index_t search(offset_t offset);
   index_t get_empty_block_index();
